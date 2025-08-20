@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 248 248 248;
+  --card: 255 255 255;
+  --text: 17 24 39;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  color: rgb(var(--text));
+  background: rgb(var(--bg));
+}
+
+.container {
+  @apply max-w-6xl mx-auto;
+}
