@@ -11,15 +11,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-50">
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <Providers>
           <div className="min-h-screen flex">
             <Sidebar />
             <div className="flex-1 flex flex-col">
               <Topbar />
               <main className="p-6">
-                <div className="container">{children}</div>
+                <div className="container max-w-6xl mx-auto">{children}</div>
               </main>
             </div>
           </div>

@@ -2,14 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light defaults */
 :root {
   --bg: 248 248 248;
   --card: 255 255 255;
   --text: 17 24 39;
 }
 
-html, body {
-  height: 100%;
+/* Dark overrides */
+html.dark {
+  --bg: 17 24 39;
+  --card: 24 24 27;
+  --text: 226 232 240;
 }
 
 body {
@@ -17,6 +21,9 @@ body {
   background: rgb(var(--bg));
 }
 
-.container {
-  @apply max-w-6xl mx-auto;
+/* Optional helper */
+.card {
+  background: rgb(var(--card));
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }

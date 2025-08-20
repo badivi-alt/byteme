@@ -1,85 +1,77 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import Link from "next/link"
+import Stats from "@/components/Stats"
+import AddLibraryItem from "@/components/AddLibraryItem"
+import LibraryList from "@/components/LibraryList"
 
 export default async function OverviewPage() {
   const session = await getServerSession(authOptions)
   const user = session?.user?.email
     ? await prisma.user.findUnique({ where: { email: session.user!.email! } })
     : null
-
   const userId = user?.id ?? ""
 
-  const [tasks, library] = await Promise.all([
-    prisma.task.findMany({ where: { userId }, orderBy: { createdAt: "desc" } }),
-    prisma.libraryItem.findMany({ where: { userId }, orderBy: { createdAt: "desc" } })
+  const [counts, todayTop, library] = await Promise.all([
+    prisma.task.groupBy({
+      by: ["bucket"],
+      where: { userId, status: "open" },
+      _count: true
+    }),
+    prisma.task.findMany({
+      where: { userId, bucket: "TODAY", status: "open" },
+      orderBy: [{ sort: "asc" }, { createdAt: "desc" }],
+      take: 5
+    }),
+    prisma.libraryItem.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 8
+    })
   ])
 
-  const openCount = tasks.filter(t => t.status === "open").length
-  const doneCount = tasks.filter(t => t.status === "done").length
-  const todayList = tasks.filter(t => t.bucket === "TODAY" && t.status === "open").slice(0, 5)
+  const openTotal = counts.reduce((a, c) => a + c._count, 0)
+  const byBucket = (b: string) => counts.find(x => x.bucket === b)?._count ?? 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h1 className="text-2xl font-semibold">Overview</h1>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl p-5 shadow-soft">
-          <div className="text-sm text-gray-500">Open tasks</div>
-          <div className="text-3xl font-semibold">{openCount}</div>
-        </div>
-        <div className="bg-white rounded-2xl p-5 shadow-soft">
-          <div className="text-sm text-gray-500">Completed</div>
-          <div className="text-3xl font-semibold">{doneCount}</div>
-        </div>
-        <div className="bg-white rounded-2xl p-5 shadow-soft">
-          <div className="text-sm text-gray-500">Library items</div>
-          <div className="text-3xl font-semibold">{library.length}</div>
-        </div>
-      </section>
+      <Stats
+        cards={[
+          { label: "Open tasks", value: openTotal },
+          { label: "Today", value: byBucket("TODAY") },
+          { label: "Tomorrow", value: byBucket("TOMORROW") },
+          { label: "Later", value: byBucket("LATER") }
+        ]}
+      />
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl p-5 shadow-soft">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Today plan</h2>
-            <Link href="/today" className="text-sm text-brand">View all</Link>
-          </div>
-          <ul className="space-y-2">
-            {todayList.length === 0 && <li className="text-sm text-gray-500">No tasks for today</li>}
-            {todayList.map(t => (
-              <li key={t.id} className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-brand inline-block" />
-                <span>{t.title}</span>
-              </li>
-            ))}
-          </ul>
+      <section className="grid md:grid-cols-2 gap-6">
+        <div className="card p-5">
+          <h2 className="font-semibold mb-3">Today’s plan</h2>
+          {todayTop.length === 0 ? (
+            <div className="text-sm text-gray-500 dark:text-gray-400">Nothing planned yet.</div>
+          ) : (
+            <ul className="space-y-2">
+              {todayTop.map(t => (
+                <li key={t.id} className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 mt-0.5" />
+                  <span>{t.title}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <div className="bg-white rounded-2xl p-5 shadow-soft">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Library</h2>
-            <Link href="/library" className="text-sm text-brand">Open</Link>
+
+        <div className="space-y-4">
+          <div className="card p-5">
+            <h2 className="font-semibold mb-3">Quick add to Library</h2>
+            <AddLibraryItem />
           </div>
-          <ul className="space-y-2">
-            {library.slice(0, 5).map(item => (
-              <li key={item.id} className="truncate">
-                <span className="font-medium">{item.title}</span>
-                {item.url ? (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-gray-500 ml-2"
-                  >
-                    {new URL(item.url).hostname}
-                  </a>
-                ) : (
-                  <span className="text-sm text-gray-500 ml-2">{item.description}</span>
-                )}
-              </li>
-            ))}
-            {library.length === 0 && <li className="text-sm text-gray-500">No items yet</li>}
-          </ul>
+          <div className="card p-5">
+            <h2 className="font-semibold mb-3">Library</h2>
+            <LibraryList initialItems={library} />
+          </div>
         </div>
       </section>
     </div>

@@ -1,51 +1,27 @@
-import { PrismaClient } from "@prisma/client"
-import { hash } from "bcryptjs"
-
-const prisma = new PrismaClient()
+// prisma/seed.ts
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 async function main() {
-  const email = "demo@bytesized.dev"
-  const password = "demo123"
-  const passwordHash = await hash(password, 10)
+  const id = process.env.DEMO_USER_ID ?? "demo-user-id";
 
-  const user = await prisma.user.upsert({
-    where: { email },
+  await prisma.user.upsert({
+    where: { id },
     update: {},
     create: {
-      email,
+      id,
+      email: "demo@example.com",
       name: "Demo User",
-      passwordHash,
-      image: null
-    }
-  })
+    },
+  });
 
-  // Clean previous demo data
-  await prisma.task.deleteMany({ where: { userId: user.id } })
-  await prisma.libraryItem.deleteMany({ where: { userId: user.id } })
-
-  await prisma.task.createMany({
-    data: [
-      { userId: user.id, title: "Set up the project", bucket: "TODAY" },
-      { userId: user.id, title: "Write first task", bucket: "TODAY" },
-      { userId: user.id, title: "Plan tomorrow work", bucket: "TOMORROW" },
-      { userId: user.id, title: "Backlog brainstorming", bucket: "LATER" }
-    ]
-  })
-
-  await prisma.libraryItem.createMany({
-    data: [
-      { userId: user.id, title: "Product vision note", description: "Short doc to align on outcomes" },
-      { userId: user.id, title: "Design inspiration", url: "https://dribbble.com", description: "Mood board" }
-    ]
-  })
-
-  console.log("Seed complete")
-  console.log("Login with:", email, "password:", password)
+  console.log("Seeded demo user:", id);
 }
-
-main().catch((e) => {
-  console.error(e)
-  process.exit(1)
-}).finally(async () => {
-  await prisma.$disconnect()
-})
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

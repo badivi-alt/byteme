@@ -1,47 +1,65 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
+type Bucket = "TODAY" | "TOMORROW" | "LATER";
+const asBucket = (b: unknown): Bucket =>
+  b === "TOMORROW" ? "TOMORROW" : b === "LATER" ? "LATER" : "TODAY";
+
+// GET /api/tasks?bucket=TODAY|TOMORROW|LATER&userId=<id>
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const url = new URL(req.url);
+  const bucketParam = url.searchParams.get("bucket");
+  const userIdParam = url.searchParams.get("userId");
+  const userId = (userIdParam ?? process.env.DEMO_USER_ID ?? "").trim();
 
-  const { searchParams } = new URL(req.url)
-  const bucket = searchParams.get("bucket") as "TODAY" | "TOMORROW" | "LATER" | null
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } })
-  if (!user) return NextResponse.json({ tasks: [] })
+  const where: any = {};
+  if (bucketParam) where.bucket = asBucket(bucketParam);
+  if (userId) where.userId = userId;
 
   const tasks = await prisma.task.findMany({
-    where: {
-      userId: user.id,
-      ...(bucket ? { bucket } : {})
-    },
-    orderBy: { createdAt: "desc" }
-  })
+    where,
+    orderBy: [{ createdAt: "desc" }],
+  });
 
-  return NextResponse.json({ tasks })
+  return NextResponse.json({ tasks });
 }
 
+// POST /api/tasks
+// body: { title: string; bucket?: Bucket; notes?: string; userId?: string }
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } })
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const body = await req.json().catch(() => ({} as any));
 
-  const body = await req.json()
-  const { title, notes, bucket } = body as { title: string; notes?: string; bucket?: "TODAY" | "TOMORROW" | "LATER" }
-  if (!title || title.trim().length === 0) return NextResponse.json({ error: "Title required" }, { status: 400 })
+  const title = String(body.title ?? "").trim();
+  const notes = body.notes ?? null;
+  const bucket = asBucket(body.bucket);
+  const bodyUserId = typeof body.userId === "string" ? body.userId.trim() : "";
+  const userId = (bodyUserId || process.env.DEMO_USER_ID || "").trim();
 
-  const task = await prisma.task.create({
+  if (!title) {
+    return NextResponse.json({ error: "title required" }, { status: 400 });
+  }
+  if (!userId) {
+    return NextResponse.json(
+      { error: "userId required. Pass body.userId or set DEMO_USER_ID in .env" },
+      { status: 400 }
+    );
+  }
+
+  // Satisfy required relation by connecting (or creating) the user
+  const created = await prisma.task.create({
     data: {
-      title: title.trim(),
-      notes: notes?.trim() || null,
-      bucket: bucket ?? "TODAY",
-      userId: user.id
-    }
-  })
+      title,
+      notes,
+      bucket,
+      status: "open",
+      user: {
+        connectOrCreate: {
+          where: { id: userId },
+          create: { id: userId, email: "demo@example.com", name: "Demo User" },
+        },
+      },
+    },
+  });
 
-  return NextResponse.json({ task }, { status: 201 })
+  return NextResponse.json({ task: created }, { status: 201 });
 }

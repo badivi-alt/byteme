@@ -1,5 +1,11 @@
-export { default } from "next-auth/middleware"
+import { withAuth } from "next-auth/middleware"
+
+export default withAuth({
+  pages: { signIn: "/auth/signin" }
+})
 
 export const config = {
-  matcher: ["/", "/today", "/plan", "/library"]
+  matcher: [
+    "/((?!_next|api/auth|auth|public|favicon.ico|robots.txt|sitemap.xml).*)"
+  ]
 }
