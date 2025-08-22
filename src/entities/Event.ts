@@ -1,12 +1,17 @@
-export interface Event {
+export interface IEvent {
   id: string;
   user_id: string;
   event_name: string;
   timestamp: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 }
 
-export class Event {
+export class Event implements IEvent {
+  id!: string;
+  user_id!: string;
+  event_name!: string;
+  timestamp!: string;
+  meta?: Record<string, unknown>;
   static async filter(criteria: Partial<Event>, orderBy?: string) {
     // TODO: Implement actual API call
     return [];

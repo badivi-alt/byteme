@@ -101,7 +101,7 @@ export default function TodayPage() {
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Today's Learning</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Today&apos;s Learning</h1>
         <p className="text-gray-600">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
 
