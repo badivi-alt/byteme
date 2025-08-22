@@ -8,6 +8,6 @@ export interface CurriculumTopic {
 export class CurriculumTopic {
   static async create(data: Partial<CurriculumTopic>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as CurriculumTopic;
+    return { id: "mock-id", ...data } as CurriculumTopic;
   }
 }

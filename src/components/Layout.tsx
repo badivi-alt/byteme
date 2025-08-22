@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import {
   TrendingUp,
   User,
   MessageCircle,
-  Home
+  Home,
 } from "lucide-react";
 
 const navItems = [
@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <h1 className="text-xl font-semibold text-gray-900">ByteSized</h1>
           </div>
-          
+
           <nav className="flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
@@ -64,9 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 pb-20 md:pb-0">
-        {children}
-      </main>
+      <main className="flex-1 pb-20 md:pb-0">{children}</main>
 
       {/* Bottom navigation for mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
@@ -76,9 +74,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               key={item.name}
               href={item.path}
               className={`flex flex-col items-center justify-center py-2 px-1 ${
-                isActive(item.path)
-                  ? "text-indigo-600"
-                  : "text-gray-400"
+                isActive(item.path) ? "text-indigo-600" : "text-gray-400"
               }`}
             >
               <item.icon className="w-5 h-5 mb-1" />

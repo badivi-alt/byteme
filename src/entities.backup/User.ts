@@ -10,8 +10,8 @@ export interface User {
     career_goal?: string;
     skill_goals?: string[];
     daily_minutes_target?: number;
-    pace?: 'standard' | 'compressed' | 'stretched';
-    learning_style?: 'video' | 'reading' | 'interactive' | 'mixed';
+    pace?: "standard" | "compressed" | "stretched";
+    learning_style?: "video" | "reading" | "interactive" | "mixed";
     budget?: string;
     include_projects?: boolean;
     assessment_preference?: boolean;
@@ -30,11 +30,11 @@ export class User {
   static async me() {
     // TODO: Implement actual API call
     return {
-      id: 'mock-user',
-      email: 'user@example.com',
-      work_days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+      id: "mock-user",
+      email: "user@example.com",
+      work_days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
       streak_days: 0,
-      xp: 0
+      xp: 0,
     } as User;
   }
 

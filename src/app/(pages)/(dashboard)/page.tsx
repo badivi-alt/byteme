@@ -1,8 +1,15 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { User, PlanItem, Task, Event, Curriculum, Topic } from "@/entities/all";
-import { format, startOfDay, isToday, addDays, startOfWeek, endOfWeek } from "date-fns";
+import {
+  format,
+  startOfDay,
+  isToday,
+  addDays,
+  startOfWeek,
+  endOfWeek,
+} from "date-fns";
 import {
   CheckCircle,
   Clock,
@@ -15,7 +22,7 @@ import {
   MessageCircle,
   Target,
   Award,
-  X
+  X,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,7 +44,8 @@ function CopilotInviteCard({ onDismiss }: { onDismiss: () => void }) {
                 Ready to start learning?
               </h3>
               <p className="text-gray-600 mb-4">
-                Use our AI Copilot to create a personalized learning plan tailored to your goals and schedule.
+                Use our AI Copilot to create a personalized learning plan
+                tailored to your goals and schedule.
               </p>
               <div className="flex items-center space-x-3">
                 <Button className="bg-indigo-600 hover:bg-indigo-700" asChild>
@@ -66,24 +74,31 @@ function CopilotInviteCard({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
-function TodayOverview({ todayItems, tasks, user }: { 
+function TodayOverview({
+  todayItems,
+  tasks,
+  user,
+}: {
   todayItems: PlanItem[];
   tasks: Record<string, Task>;
   user: User;
 }) {
-  const completedCount = todayItems.filter(item => item.status === &apos;done&apos;).length;
+  const completedCount = todayItems.filter(
+    (item) => item.status === "done",
+  ).length;
   const totalMinutes = todayItems.reduce((sum, item) => {
     const task = tasks[item.task_id];
     return sum + (task?.duration_minutes || 0);
   }, 0);
   const completedMinutes = todayItems
-    .filter(item => item.status === &apos;done&apos;)
+    .filter((item) => item.status === "done")
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
     }, 0);
 
-  const progressPercentage = totalMinutes > 0 ? (completedMinutes / totalMinutes) * 100 : 0;
+  const progressPercentage =
+    totalMinutes > 0 ? (completedMinutes / totalMinutes) * 100 : 0;
   const targetMinutes = user?.preferences?.daily_minutes_target || 90;
 
   return (
@@ -91,7 +106,7 @@ function TodayOverview({ todayItems, tasks, user }: {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Calendar className="w-5 h-5 text-indigo-600" />
-          <span>Today&apos;s Progress</span>
+          <span>Today's Progress</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -107,12 +122,14 @@ function TodayOverview({ todayItems, tasks, user }: {
               <div className="text-2xl font-bold text-indigo-600">
                 {completedMinutes} min
               </div>
-              <div className="text-sm text-gray-600">of {targetMinutes} min goal</div>
+              <div className="text-sm text-gray-600">
+                of {targetMinutes} min goal
+              </div>
             </div>
           </div>
-          
+
           <Progress value={progressPercentage} className="h-3" />
-          
+
           {todayItems.length > 0 && (
             <div className="flex items-center justify-between">
               <Button size="sm" asChild>
@@ -126,7 +143,7 @@ function TodayOverview({ todayItems, tasks, user }: {
               </span>
             </div>
           )}
-          
+
           {todayItems.length === 0 && (
             <div className="text-center py-4">
               <p className="text-gray-600 mb-3">No tasks scheduled for today</p>
@@ -144,14 +161,20 @@ function TodayOverview({ todayItems, tasks, user }: {
   );
 }
 
-function WeeklyOverview({ weeklyItems, tasks }: {
+function WeeklyOverview({
+  weeklyItems,
+  tasks,
+}: {
   weeklyItems: PlanItem[];
   tasks: Record<string, Task>;
 }) {
-  const weeklyCompleted = weeklyItems.filter(item => item.status === &apos;done&apos;).length;
-  const weeklyProgress = weeklyItems.length > 0 ? (weeklyCompleted / weeklyItems.length) * 100 : 0;
+  const weeklyCompleted = weeklyItems.filter(
+    (item) => item.status === "done",
+  ).length;
+  const weeklyProgress =
+    weeklyItems.length > 0 ? (weeklyCompleted / weeklyItems.length) * 100 : 0;
   const weeklyMinutes = weeklyItems
-    .filter(item => item.status === &apos;done&apos;)
+    .filter((item) => item.status === "done")
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -181,9 +204,9 @@ function WeeklyOverview({ weeklyItems, tasks }: {
               <div className="text-sm text-gray-600">Time invested</div>
             </div>
           </div>
-          
+
           <Progress value={weeklyProgress} className="h-3" />
-          
+
           <div className="flex items-center justify-between">
             <Button variant="outline" size="sm" asChild>
               <a href="/plan">
@@ -215,25 +238,32 @@ function ActiveTopics({ curricula }: { curricula: Curriculum[] }) {
       <CardContent>
         <div className="space-y-3">
           {curricula.slice(0, 3).map((curriculum) => (
-            <div key={curriculum.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div
+              key={curriculum.id}
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
               <div>
-                <h4 className="font-medium text-gray-900">{curriculum.title}</h4>
+                <h4 className="font-medium text-gray-900">
+                  {curriculum.title}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {curriculum.settings?.time_per_day || 90} min/day
                 </p>
               </div>
-              <Badge variant={curriculum.status === &apos;active&apos; ? &apos;default&apos; : &apos;secondary&apos;}>
+              <Badge
+                variant={
+                  curriculum.status === "active" ? "default" : "secondary"
+                }
+              >
                 {curriculum.status}
               </Badge>
             </div>
           ))}
-          
+
           {curricula.length > 3 && (
             <div className="text-center pt-2">
               <Button variant="ghost" size="sm" asChild>
-                <a href="/plan">
-                  View all {curricula.length} topics
-                </a>
+                <a href="/plan">View all {curricula.length} topics</a>
               </Button>
             </div>
           )}
@@ -267,38 +297,44 @@ export default function HomePage() {
         setShowCopilotInvite(true);
       }
 
-      const today = format(new Date(), &apos;yyyy-MM-dd&apos;);
+      const today = format(new Date(), "yyyy-MM-dd");
       const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
       const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
 
-      const todayPlanItems = await PlanItem.filter({
-        user_id: currentUser.id,
-        scheduled_date: today
-      }, &apos;scheduled_index&apos;);
+      const todayPlanItems = await PlanItem.filter(
+        {
+          user_id: currentUser.id,
+          scheduled_date: today,
+        },
+        "scheduled_index",
+      );
 
       const weeklyPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: {
-          $gte: format(weekStart, &apos;yyyy-MM-dd&apos;),
-          $lte: format(weekEnd, &apos;yyyy-MM-dd&apos;)
-        }
+          $gte: format(weekStart, "yyyy-MM-dd"),
+          $lte: format(weekEnd, "yyyy-MM-dd"),
+        },
       });
 
       const allItems = [...todayPlanItems, ...weeklyPlanItems];
       if (allItems.length > 0) {
-        const taskIds = [...new Set(allItems.map(item => item.task_id))];
+        const taskIds = [...new Set(allItems.map((item) => item.task_id))];
         const relatedTasks = await Task.filter({ id: { $in: taskIds } });
         const taskMap: Record<string, Task> = {};
-        relatedTasks.forEach(task => {
+        relatedTasks.forEach((task) => {
           taskMap[task.id] = task;
         });
         setTasks(taskMap);
       }
 
-      const activeCurricula = await Curriculum.filter({
-        user_id: currentUser.id,
-        status: &apos;active&apos;
-      }, &apos;-created_date&apos;);
+      const activeCurricula = await Curriculum.filter(
+        {
+          user_id: currentUser.id,
+          status: "active",
+        },
+        "-created_date",
+      );
 
       const allTopics = await Topic.list();
 
@@ -309,12 +345,11 @@ export default function HomePage() {
 
       await Event.create({
         user_id: currentUser.id,
-        event_name: &apos;home_viewed&apos;,
-        timestamp: new Date().toISOString()
+        event_name: "home_viewed",
+        timestamp: new Date().toISOString(),
       });
-
     } catch (error) {
-      console.error(&apos;Error loading home data:&apos;, error);
+      console.error("Error loading home data:", error);
     } finally {
       setLoading(false);
     }
@@ -325,11 +360,11 @@ export default function HomePage() {
     try {
       await Event.create({
         user_id: user!.id,
-        event_name: &apos;copilot_invite_dismissed&apos;,
-        timestamp: new Date().toISOString()
+        event_name: "copilot_invite_dismissed",
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error(&apos;Error logging copilot dismiss:&apos;, error);
+      console.error("Error logging copilot dismiss:", error);
     }
   };
 
@@ -340,7 +375,10 @@ export default function HomePage() {
           <div className="h-8 bg-gray-200 rounded animate-pulse" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="h-64 bg-gray-200 rounded-lg animate-pulse"
+              />
             ))}
           </div>
         </div>
@@ -355,13 +393,13 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.full_name?.split(&apos; &apos;)[0] || &apos;Learner&apos;}!
+              Welcome back, {user?.full_name?.split(" ")[0] || "Learner"}!
             </h1>
             <p className="text-gray-600">
-              {format(new Date(), &apos;EEEE, MMMM d, yyyy&apos;)}
+              {format(new Date(), "EEEE, MMMM d, yyyy")}
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <Flame className="w-5 h-5 text-orange-500" />
@@ -401,28 +439,44 @@ export default function HomePage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2" asChild>
+            <Button
+              variant="outline"
+              className="w-full h-20 flex flex-col items-center justify-center space-y-2"
+              asChild
+            >
               <a href="/today">
                 <Play className="w-6 h-6" />
                 <span className="text-sm">Start Learning</span>
               </a>
             </Button>
-            
-            <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2" asChild>
+
+            <Button
+              variant="outline"
+              className="w-full h-20 flex flex-col items-center justify-center space-y-2"
+              asChild
+            >
               <a href="/copilot">
                 <MessageCircle className="w-6 h-6" />
                 <span className="text-sm">New Plan</span>
               </a>
             </Button>
-            
-            <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2" asChild>
+
+            <Button
+              variant="outline"
+              className="w-full h-20 flex flex-col items-center justify-center space-y-2"
+              asChild
+            >
               <a href="/library">
                 <BookOpen className="w-6 h-6" />
                 <span className="text-sm">Browse Library</span>
               </a>
             </Button>
-            
-            <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2" asChild>
+
+            <Button
+              variant="outline"
+              className="w-full h-20 flex flex-col items-center justify-center space-y-2"
+              asChild
+            >
               <a href="/insights">
                 <TrendingUp className="w-6 h-6" />
                 <span className="text-sm">View Progress</span>

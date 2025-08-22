@@ -13,6 +13,6 @@ export class Topic {
 
   static async create(data: Partial<Topic>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as Topic;
+    return { id: "mock-id", ...data } as Topic;
   }
 }
