@@ -19,6 +19,6 @@ export class Event implements IEvent {
 
   static async create(data: Partial<Event>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as Event;
+    return { id: "mock-id", ...data } as Event;
   }
 }

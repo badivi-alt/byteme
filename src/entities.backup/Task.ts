@@ -25,7 +25,7 @@ export class Task implements ITask {
     return [] as Task[];
   }
 
-  static async filter(criteria: { 
+  static async filter(criteria: {
     id?: string | { $in: string[] };
     [key: string]: unknown;
   }) {
@@ -35,6 +35,6 @@ export class Task implements ITask {
 
   static async create(data: Partial<Task>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as Task;
+    return { id: "mock-id", ...data } as Task;
   }
 }

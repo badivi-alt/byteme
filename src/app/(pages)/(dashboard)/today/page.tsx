@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { User, PlanItem, Task } from "@/entities/all";
@@ -14,7 +14,7 @@ import {
   BookOpen,
   PlayCircle,
   XCircle,
-  CalendarDays
+  CalendarDays,
 } from "lucide-react";
 
 export default function TodayPage() {
@@ -32,17 +32,22 @@ export default function TodayPage() {
       const currentUser = await User.me();
       setUser(currentUser);
 
-      const today = format(new Date(), 'yyyy-MM-dd');
-      const todayPlanItems = await PlanItem.filter({
-        user_id: currentUser.id,
-        scheduled_date: today
-      }, 'scheduled_index');
+      const today = format(new Date(), "yyyy-MM-dd");
+      const todayPlanItems = await PlanItem.filter(
+        {
+          user_id: currentUser.id,
+          scheduled_date: today,
+        },
+        "scheduled_index",
+      );
 
       if (todayPlanItems.length > 0) {
-        const taskIds = [...new Set(todayPlanItems.map(item => item.task_id))];
+        const taskIds = [
+          ...new Set(todayPlanItems.map((item) => item.task_id)),
+        ];
         const relatedTasks = await Task.filter({ id: { $in: taskIds } });
         const taskMap: Record<string, Task> = {};
-        relatedTasks.forEach(task => {
+        relatedTasks.forEach((task) => {
           taskMap[task.id] = task;
         });
         setTasks(taskMap);
@@ -50,21 +55,24 @@ export default function TodayPage() {
 
       setTodayItems(todayPlanItems);
     } catch (error) {
-      console.error('Error loading today data:', error);
+      console.error("Error loading today data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTaskAction = async (itemId: string, action: 'done&apos; | &apos;skipped&apos; | &apos;snoozed') => {
+  const handleTaskAction = async (
+    itemId: string,
+    action: "done" | "skipped" | "snoozed",
+  ) => {
     try {
-      await PlanItem.update(itemId, { 
+      await PlanItem.update(itemId, {
         status: action,
-        completed_at: action === 'done' ? new Date().toISOString() : undefined 
+        completed_at: action === "done" ? new Date().toISOString() : undefined,
       });
       await loadData(); // Reload data to reflect changes
     } catch (error) {
-      console.error('Error updating task:', error);
+      console.error("Error updating task:", error);
     }
   };
 
@@ -75,7 +83,10 @@ export default function TodayPage() {
           <div className="h-8 bg-gray-200 rounded animate-pulse" />
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="h-32 bg-gray-200 rounded-lg animate-pulse"
+              />
             ))}
           </div>
         </div>
@@ -83,26 +94,31 @@ export default function TodayPage() {
     );
   }
 
-  const completedCount = todayItems.filter(item => item.status === 'done').length;
+  const completedCount = todayItems.filter(
+    (item) => item.status === "done",
+  ).length;
   const totalMinutes = todayItems.reduce((sum, item) => {
     const task = tasks[item.task_id];
     return sum + (task?.duration_minutes || 0);
   }, 0);
   const completedMinutes = todayItems
-    .filter(item => item.status === 'done')
+    .filter((item) => item.status === "done")
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
     }, 0);
 
-  const progressPercentage = totalMinutes > 0 ? (completedMinutes / totalMinutes) * 100 : 0;
+  const progressPercentage =
+    totalMinutes > 0 ? (completedMinutes / totalMinutes) * 100 : 0;
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Today&apos;s Learning</h1>
-        <p className="text-gray-600">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+        <h1 className="text-2xl font-bold text-gray-900">Today's Learning</h1>
+        <p className="text-gray-600">
+          {format(new Date(), "EEEE, MMMM d, yyyy")}
+        </p>
       </div>
 
       {/* Progress Overview */}
@@ -110,15 +126,23 @@ export default function TodayPage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-sm font-medium text-gray-600">Tasks Completed</p>
-              <p className="text-2xl font-bold text-gray-900">{completedCount} / {todayItems.length}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Tasks Completed
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {completedCount} / {todayItems.length}
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Time Invested</p>
-              <p className="text-2xl font-bold text-indigo-600">{completedMinutes} min</p>
+              <p className="text-2xl font-bold text-indigo-600">
+                {completedMinutes} min
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Daily Progress</p>
+              <p className="text-sm font-medium text-gray-600">
+                Daily Progress
+              </p>
               <Progress value={progressPercentage} className="mt-2" />
             </div>
           </div>
@@ -131,9 +155,12 @@ export default function TodayPage() {
           <Card>
             <CardContent className="p-6 text-center">
               <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Tasks for Today</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No Tasks for Today
+              </h3>
               <p className="text-gray-600 mb-4">
-                Looks like you don&apos;t have any learning tasks scheduled for today.
+                Looks like you don't have any learning tasks scheduled for
+                today.
               </p>
               <Button asChild>
                 <a href="/plan">
@@ -149,7 +176,10 @@ export default function TodayPage() {
             if (!task) return null;
 
             return (
-              <Card key={item.id} className={item.status === 'done&apos; ? &apos;bg-gray-50&apos; : &apos;'}>
+              <Card
+                key={item.id}
+                className={item.status === "done" ? "bg-gray-50" : ""}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -163,19 +193,21 @@ export default function TodayPage() {
                           <Clock className="w-4 h-4 mr-1" />
                           {task.duration_minutes} minutes
                         </div>
-                        {task.skill_tags?.map(tag => (
-                          <Badge key={tag} variant="outline">{tag}</Badge>
+                        {task.skill_tags?.map((tag) => (
+                          <Badge key={tag} variant="outline">
+                            {tag}
+                          </Badge>
                         ))}
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      {item.status !== 'done' && (
+                      {item.status !== "done" && (
                         <>
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleTaskAction(item.id, 'skipped')}
+                            onClick={() => handleTaskAction(item.id, "skipped")}
                           >
                             <XCircle className="w-4 h-4 mr-1" />
                             Skip
@@ -183,7 +215,7 @@ export default function TodayPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleTaskAction(item.id, 'snoozed')}
+                            onClick={() => handleTaskAction(item.id, "snoozed")}
                           >
                             <Clock className="w-4 h-4 mr-1" />
                             Snooze
@@ -192,10 +224,14 @@ export default function TodayPage() {
                             <Button
                               size="sm"
                               className="bg-indigo-600 hover:bg-indigo-700"
-                              onClick={() => handleTaskAction(item.id, 'done')}
+                              onClick={() => handleTaskAction(item.id, "done")}
                               asChild
                             >
-                              <a href={task.deep_link} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={task.deep_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 <PlayCircle className="w-4 h-4 mr-1" />
                                 Start
                               </a>
@@ -204,7 +240,7 @@ export default function TodayPage() {
                             <Button
                               size="sm"
                               className="bg-indigo-600 hover:bg-indigo-700"
-                              onClick={() => handleTaskAction(item.id, 'done')}
+                              onClick={() => handleTaskAction(item.id, "done")}
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
                               Complete
@@ -212,7 +248,7 @@ export default function TodayPage() {
                           )}
                         </>
                       )}
-                      {item.status === 'done' && (
+                      {item.status === "done" && (
                         <Badge className="bg-green-100 text-green-800">
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Completed

@@ -3,10 +3,10 @@ export interface PlanItem {
   user_id: string;
   task_id: string;
   scheduled_date: string;
-  status: 'pending' | 'done' | 'snoozed' | 'skipped';
+  status: "pending" | "done" | "snoozed" | "skipped";
   notes?: string;
   scheduled_index?: number;
-  created_via: 'copilot' | 'quick_task' | 'library';
+  created_via: "copilot" | "quick_task" | "library";
   curriculum_id?: string;
   topic_id?: string;
   lesson_id?: string;
@@ -16,18 +16,21 @@ export interface PlanItem {
 }
 
 export class PlanItem {
-  static async filter(criteria: { 
-    user_id?: string;
-    scheduled_date?: string | { $gte: string; $lte: string };
-    [key: string]: any;
-  }, orderBy?: string) {
+  static async filter(
+    criteria: {
+      user_id?: string;
+      scheduled_date?: string | { $gte: string; $lte: string };
+      [key: string]: any;
+    },
+    orderBy?: string,
+  ) {
     // TODO: Implement actual API call
     return [] as PlanItem[];
   }
 
   static async create(data: Partial<PlanItem>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as PlanItem;
+    return { id: "mock-id", ...data } as PlanItem;
   }
 
   static async update(id: string, data: Partial<PlanItem>) {

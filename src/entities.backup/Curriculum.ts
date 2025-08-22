@@ -1,7 +1,7 @@
 export interface Curriculum {
   id: string;
   title: string;
-  status: 'active' | 'paused' | 'archived';
+  status: "active" | "paused" | "archived";
   user_id: string;
   goal?: string;
   settings?: {
@@ -19,6 +19,6 @@ export class Curriculum {
 
   static async create(data: Partial<Curriculum>) {
     // TODO: Implement actual API call
-    return { id: 'mock-id', ...data } as Curriculum;
+    return { id: "mock-id", ...data } as Curriculum;
   }
 }
