@@ -1,4 +1,4 @@
-'use client';
+&apos;use client&apos;;
 
 import React, { useState, useEffect } from "react";
 import { User, PlanItem, Task, Event, Curriculum, Topic } from "@/entities/all";
@@ -71,13 +71,13 @@ function TodayOverview({ todayItems, tasks, user }: {
   tasks: Record<string, Task>;
   user: User;
 }) {
-  const completedCount = todayItems.filter(item => item.status === 'done').length;
+  const completedCount = todayItems.filter(item => item.status === &apos;done&apos;).length;
   const totalMinutes = todayItems.reduce((sum, item) => {
     const task = tasks[item.task_id];
     return sum + (task?.duration_minutes || 0);
   }, 0);
   const completedMinutes = todayItems
-    .filter(item => item.status === 'done')
+    .filter(item => item.status === &apos;done&apos;)
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -91,7 +91,7 @@ function TodayOverview({ todayItems, tasks, user }: {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Calendar className="w-5 h-5 text-indigo-600" />
-          <span>Today's Progress</span>
+          <span>Today&apos;s Progress</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -148,10 +148,10 @@ function WeeklyOverview({ weeklyItems, tasks }: {
   weeklyItems: PlanItem[];
   tasks: Record<string, Task>;
 }) {
-  const weeklyCompleted = weeklyItems.filter(item => item.status === 'done').length;
+  const weeklyCompleted = weeklyItems.filter(item => item.status === &apos;done&apos;).length;
   const weeklyProgress = weeklyItems.length > 0 ? (weeklyCompleted / weeklyItems.length) * 100 : 0;
   const weeklyMinutes = weeklyItems
-    .filter(item => item.status === 'done')
+    .filter(item => item.status === &apos;done&apos;)
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -222,7 +222,7 @@ function ActiveTopics({ curricula }: { curricula: Curriculum[] }) {
                   {curriculum.settings?.time_per_day || 90} min/day
                 </p>
               </div>
-              <Badge variant={curriculum.status === 'active' ? 'default' : 'secondary'}>
+              <Badge variant={curriculum.status === &apos;active&apos; ? &apos;default&apos; : &apos;secondary&apos;}>
                 {curriculum.status}
               </Badge>
             </div>
@@ -267,20 +267,20 @@ export default function HomePage() {
         setShowCopilotInvite(true);
       }
 
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = format(new Date(), &apos;yyyy-MM-dd&apos;);
       const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
       const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
 
       const todayPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: today
-      }, 'scheduled_index');
+      }, &apos;scheduled_index&apos;);
 
       const weeklyPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: {
-          $gte: format(weekStart, 'yyyy-MM-dd'),
-          $lte: format(weekEnd, 'yyyy-MM-dd')
+          $gte: format(weekStart, &apos;yyyy-MM-dd&apos;),
+          $lte: format(weekEnd, &apos;yyyy-MM-dd&apos;)
         }
       });
 
@@ -297,8 +297,8 @@ export default function HomePage() {
 
       const activeCurricula = await Curriculum.filter({
         user_id: currentUser.id,
-        status: 'active'
-      }, '-created_date');
+        status: &apos;active&apos;
+      }, &apos;-created_date&apos;);
 
       const allTopics = await Topic.list();
 
@@ -309,12 +309,12 @@ export default function HomePage() {
 
       await Event.create({
         user_id: currentUser.id,
-        event_name: 'home_viewed',
+        event_name: &apos;home_viewed&apos;,
         timestamp: new Date().toISOString()
       });
 
     } catch (error) {
-      console.error('Error loading home data:', error);
+      console.error(&apos;Error loading home data:&apos;, error);
     } finally {
       setLoading(false);
     }
@@ -325,11 +325,11 @@ export default function HomePage() {
     try {
       await Event.create({
         user_id: user!.id,
-        event_name: 'copilot_invite_dismissed',
+        event_name: &apos;copilot_invite_dismissed&apos;,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error('Error logging copilot dismiss:', error);
+      console.error(&apos;Error logging copilot dismiss:&apos;, error);
     }
   };
 
@@ -355,10 +355,10 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.full_name?.split(' ')[0] || 'Learner'}!
+              Welcome back, {user?.full_name?.split(&apos; &apos;)[0] || &apos;Learner&apos;}!
             </h1>
             <p className="text-gray-600">
-              {format(new Date(), 'EEEE, MMMM d, yyyy')}
+              {format(new Date(), &apos;EEEE, MMMM d, yyyy&apos;)}
             </p>
           </div>
           

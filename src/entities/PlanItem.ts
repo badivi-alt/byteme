@@ -19,7 +19,7 @@ export class PlanItem {
   static async filter(criteria: { 
     user_id?: string;
     scheduled_date?: string | { $gte: string; $lte: string };
-    [key: string]: any;
+    [key: string]: unknown;
   }, orderBy?: string) {
     // TODO: Implement actual API call
     return [] as PlanItem[];
