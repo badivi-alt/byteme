@@ -1,4 +1,4 @@
-&apos;use client&apos;;
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { User, PlanItem, Task, Event, Curriculum, Topic } from "@/entities/all";
