@@ -32,11 +32,11 @@ export default function TodayPage() {
       const currentUser = await User.me();
       setUser(currentUser);
 
-      const today = format(new Date(), &apos;yyyy-MM-dd&apos;);
+      const today = format(new Date(), 'yyyy-MM-dd');
       const todayPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: today
-      }, &apos;scheduled_index&apos;);
+      }, 'scheduled_index');
 
       if (todayPlanItems.length > 0) {
         const taskIds = [...new Set(todayPlanItems.map(item => item.task_id))];
@@ -50,21 +50,21 @@ export default function TodayPage() {
 
       setTodayItems(todayPlanItems);
     } catch (error) {
-      console.error(&apos;Error loading today data:&apos;, error);
+      console.error('Error loading today data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTaskAction = async (itemId: string, action: &apos;done&apos; | &apos;skipped&apos; | &apos;snoozed&apos;) => {
+  const handleTaskAction = async (itemId: string, action: 'done&apos; | &apos;skipped&apos; | &apos;snoozed') => {
     try {
       await PlanItem.update(itemId, { 
         status: action,
-        completed_at: action === &apos;done&apos; ? new Date().toISOString() : undefined 
+        completed_at: action === 'done' ? new Date().toISOString() : undefined 
       });
       await loadData(); // Reload data to reflect changes
     } catch (error) {
-      console.error(&apos;Error updating task:&apos;, error);
+      console.error('Error updating task:', error);
     }
   };
 
@@ -83,13 +83,13 @@ export default function TodayPage() {
     );
   }
 
-  const completedCount = todayItems.filter(item => item.status === &apos;done&apos;).length;
+  const completedCount = todayItems.filter(item => item.status === 'done').length;
   const totalMinutes = todayItems.reduce((sum, item) => {
     const task = tasks[item.task_id];
     return sum + (task?.duration_minutes || 0);
   }, 0);
   const completedMinutes = todayItems
-    .filter(item => item.status === &apos;done&apos;)
+    .filter(item => item.status === 'done')
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -102,7 +102,7 @@ export default function TodayPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Today&apos;s Learning</h1>
-        <p className="text-gray-600">{format(new Date(), &apos;EEEE, MMMM d, yyyy&apos;)}</p>
+        <p className="text-gray-600">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
 
       {/* Progress Overview */}
@@ -149,7 +149,7 @@ export default function TodayPage() {
             if (!task) return null;
 
             return (
-              <Card key={item.id} className={item.status === &apos;done&apos; ? &apos;bg-gray-50&apos; : &apos;&apos;}>
+              <Card key={item.id} className={item.status === 'done&apos; ? &apos;bg-gray-50&apos; : &apos;'}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -170,12 +170,12 @@ export default function TodayPage() {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      {item.status !== &apos;done&apos; && (
+                      {item.status !== 'done' && (
                         <>
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleTaskAction(item.id, &apos;skipped&apos;)}
+                            onClick={() => handleTaskAction(item.id, 'skipped')}
                           >
                             <XCircle className="w-4 h-4 mr-1" />
                             Skip
@@ -183,7 +183,7 @@ export default function TodayPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleTaskAction(item.id, &apos;snoozed&apos;)}
+                            onClick={() => handleTaskAction(item.id, 'snoozed')}
                           >
                             <Clock className="w-4 h-4 mr-1" />
                             Snooze
@@ -192,7 +192,7 @@ export default function TodayPage() {
                             <Button
                               size="sm"
                               className="bg-indigo-600 hover:bg-indigo-700"
-                              onClick={() => handleTaskAction(item.id, &apos;done&apos;)}
+                              onClick={() => handleTaskAction(item.id, 'done')}
                               asChild
                             >
                               <a href={task.deep_link} target="_blank" rel="noopener noreferrer">
@@ -204,7 +204,7 @@ export default function TodayPage() {
                             <Button
                               size="sm"
                               className="bg-indigo-600 hover:bg-indigo-700"
-                              onClick={() => handleTaskAction(item.id, &apos;done&apos;)}
+                              onClick={() => handleTaskAction(item.id, 'done')}
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
                               Complete
@@ -212,7 +212,7 @@ export default function TodayPage() {
                           )}
                         </>
                       )}
-                      {item.status === &apos;done&apos; && (
+                      {item.status === 'done' && (
                         <Badge className="bg-green-100 text-green-800">
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Completed

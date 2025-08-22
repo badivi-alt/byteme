@@ -71,13 +71,13 @@ function TodayOverview({ todayItems, tasks, user }: {
   tasks: Record<string, Task>;
   user: User;
 }) {
-  const completedCount = todayItems.filter(item => item.status === &apos;done&apos;).length;
+  const completedCount = todayItems.filter(item => item.status === 'done').length;
   const totalMinutes = todayItems.reduce((sum, item) => {
     const task = tasks[item.task_id];
     return sum + (task?.duration_minutes || 0);
   }, 0);
   const completedMinutes = todayItems
-    .filter(item => item.status === &apos;done&apos;)
+    .filter(item => item.status === 'done')
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -148,10 +148,10 @@ function WeeklyOverview({ weeklyItems, tasks }: {
   weeklyItems: PlanItem[];
   tasks: Record<string, Task>;
 }) {
-  const weeklyCompleted = weeklyItems.filter(item => item.status === &apos;done&apos;).length;
+  const weeklyCompleted = weeklyItems.filter(item => item.status === 'done').length;
   const weeklyProgress = weeklyItems.length > 0 ? (weeklyCompleted / weeklyItems.length) * 100 : 0;
   const weeklyMinutes = weeklyItems
-    .filter(item => item.status === &apos;done&apos;)
+    .filter(item => item.status === 'done')
     .reduce((sum, item) => {
       const task = tasks[item.task_id];
       return sum + (task?.duration_minutes || 0);
@@ -222,7 +222,7 @@ function ActiveTopics({ curricula }: { curricula: Curriculum[] }) {
                   {curriculum.settings?.time_per_day || 90} min/day
                 </p>
               </div>
-              <Badge variant={curriculum.status === &apos;active&apos; ? &apos;default&apos; : &apos;secondary&apos;}>
+              <Badge variant={curriculum.status === 'active' ? 'default' : 'secondary'}>
                 {curriculum.status}
               </Badge>
             </div>
@@ -267,20 +267,20 @@ export default function HomePage() {
         setShowCopilotInvite(true);
       }
 
-      const today = format(new Date(), &apos;yyyy-MM-dd&apos;);
+      const today = format(new Date(), 'yyyy-MM-dd');
       const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
       const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
 
       const todayPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: today
-      }, &apos;scheduled_index&apos;);
+      }, 'scheduled_index');
 
       const weeklyPlanItems = await PlanItem.filter({
         user_id: currentUser.id,
         scheduled_date: {
-          $gte: format(weekStart, &apos;yyyy-MM-dd&apos;),
-          $lte: format(weekEnd, &apos;yyyy-MM-dd&apos;)
+          $gte: format(weekStart, 'yyyy-MM-dd'),
+          $lte: format(weekEnd, 'yyyy-MM-dd')
         }
       });
 
@@ -297,8 +297,8 @@ export default function HomePage() {
 
       const activeCurricula = await Curriculum.filter({
         user_id: currentUser.id,
-        status: &apos;active&apos;
-      }, &apos;-created_date&apos;);
+        status: 'active'
+      }, '-created_date');
 
       const allTopics = await Topic.list();
 
@@ -309,12 +309,12 @@ export default function HomePage() {
 
       await Event.create({
         user_id: currentUser.id,
-        event_name: &apos;home_viewed&apos;,
+        event_name: 'home_viewed',
         timestamp: new Date().toISOString()
       });
 
     } catch (error) {
-      console.error(&apos;Error loading home data:&apos;, error);
+      console.error('Error loading home data:', error);
     } finally {
       setLoading(false);
     }
@@ -325,11 +325,11 @@ export default function HomePage() {
     try {
       await Event.create({
         user_id: user!.id,
-        event_name: &apos;copilot_invite_dismissed&apos;,
+        event_name: 'copilot_invite_dismissed',
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error(&apos;Error logging copilot dismiss:&apos;, error);
+      console.error('Error logging copilot dismiss:', error);
     }
   };
 
@@ -355,10 +355,10 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.full_name?.split(&apos; &apos;)[0] || &apos;Learner&apos;}!
+              Welcome back, {user?.full_name?.split(' &apos;)[0] || &apos;Learner'}!
             </h1>
             <p className="text-gray-600">
-              {format(new Date(), &apos;EEEE, MMMM d, yyyy&apos;)}
+              {format(new Date(), 'EEEE, MMMM d, yyyy')}
             </p>
           </div>
           
