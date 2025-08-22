@@ -1,4 +1,4 @@
-export interface Task {
+export interface ITask {
   id: string;
   stable_id: string;
   title: string;
@@ -10,7 +10,16 @@ export interface Task {
   optional: boolean;
 }
 
-export class Task {
+export class Task implements ITask {
+  id!: string;
+  stable_id!: string;
+  title!: string;
+  provider?: string;
+  duration_minutes!: number;
+  skill_tags?: string[];
+  deep_link?: string;
+  description?: string;
+  optional!: boolean;
   static async list() {
     // TODO: Implement actual API call
     return [] as Task[];
@@ -18,7 +27,7 @@ export class Task {
 
   static async filter(criteria: { 
     id?: string | { $in: string[] };
-    [key: string]: any;
+    [key: string]: unknown;
   }) {
     // TODO: Implement actual API call
     return [] as Task[];
